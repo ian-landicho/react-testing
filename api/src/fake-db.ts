@@ -1,21 +1,25 @@
 import { v4 as uuid } from 'uuid';
 
-export type Todo = {
+export type Reminder = {
   id: string;
-  title: string;
+  description: string;
+  isCompleted: boolean;
 };
 
-export const todos: Todo[] = [
+export const reminders: Reminder[] = [
   {
     id: uuid(),
-    title: 'Learn react testing library',
+    description: 'Learn TypeScript',
+    isCompleted: false,
   },
   {
     id: uuid(),
-    title: 'Feed my dog',
+    description: 'Feed my dog',
+    isCompleted: false,
   },
   {
     id: uuid(),
-    title: 'Read a book',
+    description: 'Read a book',
+    isCompleted: false,
   },
 ];
