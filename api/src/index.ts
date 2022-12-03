@@ -15,6 +15,14 @@ app.get('/', (_, res: express.Response) => {
   return res.json({ data: reminders });
 });
 
+app.get('/open', (_, res: express.Response) => {
+  return res.json({ data: reminders.filter(r => !r.completed) });
+});
+
+app.get('/completed', (_, res: express.Response) => {
+  return res.json({ data: reminders.filter(r => r.completed) });
+});
+
 app.get('/:description', (req: express.Request, res: express.Response) => {
   const { description } = req.params;
   const filteredReminders = reminders.filter(reminder =>
@@ -25,18 +33,15 @@ app.get('/:description', (req: express.Request, res: express.Response) => {
 });
 
 app.post('/', (req: express.Request, res: express.Response) => {
-  const { description } = req.body;
+  const { description }: { description: Reminder['description'] } = req.body;
   const newReminder: Reminder = {
     id: uuid(),
     description,
-    isCompleted: false,
+    completed: false,
   };
   reminders.push(newReminder);
 
-  console.clear();
-  console.log('reminders :>> ', reminders);
-
-  return res.json({ data: reminders });
+  return res.json({ data: reminders.filter(r => !r.completed) });
 });
 
 app.put('/:id', (req: express.Request, res: express.Response) => {
@@ -46,10 +51,10 @@ app.put('/:id', (req: express.Request, res: express.Response) => {
 
   if (reminder) {
     reminder.description = payload.description;
-    reminder.isCompleted = payload.isCompleted;
+    reminder.completed = payload.completed;
   }
 
-  return res.json({ data: reminders });
+  return res.json({ data: reminders.filter(reminder => !reminder.completed) });
 });
 
 app.delete('/:id', (req: express.Request, res: express.Response) => {
