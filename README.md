@@ -44,7 +44,13 @@ Super simple and trivial reminder/todo app.
       "plugin:jest/recommended",
       "plugin:@typescript-eslint/recommended"
     ],
+  ```
 
+- Setup and teardown with `setupFilesAfterEnv`
+
+  ```js
+  // jest.config.js
+  setupFilesAfterEnv: ['./jest-setup.ts'];
   ```
 
 - Testing `React` components with [React Testing Library](https://github.com/testing-library/react-testing-library)
@@ -74,3 +80,9 @@ Super simple and trivial reminder/todo app.
       },
     },
   ```
+
+## References
+
+- [Avoid nested tests](https://kentcdodds.com/blog/avoid-nesting-when-youre-testing)
+- [Making tests resilient to change](https://kentcdodds.com/blog/making-your-ui-tests-resilient-to-change)
+- [Simplify tests with custom matchers](https://redd.one/blog/practical-guide-to-custom-jest-matchers)
