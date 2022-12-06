@@ -14,7 +14,7 @@ import {
 
 const API_URL = 'http://localhost:3131/';
 
-type Reminder = {
+export type Reminder = {
   id: string;
   description: string;
   completed: boolean;
@@ -25,22 +25,27 @@ export default function App() {
   const [completedReminders, setCompletedReminders] = React.useState<
     Reminder[]
   >([]);
+  const [serverFailed, setServerFailed] = React.useState(false);
 
   React.useEffect(() => {
     getReminders();
 
     async function getReminders() {
-      const [open, completed] = await Promise.all([
-        fetch(`${API_URL}open`),
-        fetch(`${API_URL}completed`),
-      ]);
-      const [openData, completedData]: [
-        openData: { data: Reminder[] },
-        completeData: { data: Reminder[] }
-      ] = await Promise.all([open.json(), completed.json()]);
+      try {
+        const [open, completed] = await Promise.all([
+          fetch(`${API_URL}open`),
+          fetch(`${API_URL}completed`),
+        ]);
+        const [openData, completedData]: [
+          openData: { data: Reminder[] },
+          completeData: { data: Reminder[] }
+        ] = await Promise.all([open.json(), completed.json()]);
 
-      setOpenReminders(openData.data);
-      setCompletedReminders(completedData.data);
+        setOpenReminders(openData.data);
+        setCompletedReminders(completedData.data);
+      } catch (error) {
+        setServerFailed(true);
+      }
     }
   }, []);
 
@@ -53,6 +58,7 @@ export default function App() {
       </Header>
       <Stack align="center">
         <Stack spacing={50}>
+          {serverFailed && <Alert>Server not ready.</Alert>}
           <Form setOpenReminders={setOpenReminders} />
           <Reminders
             openReminders={openReminders}
@@ -154,19 +160,13 @@ function Reminders({
   }
 
   async function updateReminder(reminder: Readonly<Reminder>) {
-    const response = await fetch(`${API_URL}${reminder.id}`, {
+    await fetch(`${API_URL}${reminder.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ payload: reminder }),
     });
-
-    if (!response.ok) {
-      console.error(
-        `Error occured with the following status: ${response.statusText}`
-      );
-    }
   }
 
   return (
@@ -175,7 +175,7 @@ function Reminders({
         <Title order={2} weight="lighter">
           My Reminders
         </Title>
-        <SimpleGrid cols={2}>
+        <SimpleGrid cols={2} data-testid="open-reminders">
           {openReminders.length === 0 ? (
             <Alert>No reminders found.</Alert>
           ) : (
@@ -197,7 +197,7 @@ function Reminders({
         <Title order={2} weight="lighter">
           Completed
         </Title>
-        <SimpleGrid cols={2}>
+        <SimpleGrid cols={2} data-testid="completed-reminders">
           {completedReminders.length === 0 ? (
             <Alert>No completed reminders yet.</Alert>
           ) : (
