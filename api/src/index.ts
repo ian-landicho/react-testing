@@ -16,11 +16,11 @@ app.get('/', (_, res: express.Response) => {
 });
 
 app.get('/open', (_, res: express.Response) => {
-  return res.json({ data: reminders.filter(r => !r.completed) });
+  return res.json({ data: reminders.filter(reminder => !reminder.completed) });
 });
 
 app.get('/completed', (_, res: express.Response) => {
-  return res.json({ data: reminders.filter(r => r.completed) });
+  return res.json({ data: reminders.filter(reminder => reminder.completed) });
 });
 
 app.get('/:description', (req: express.Request, res: express.Response) => {
@@ -41,7 +41,7 @@ app.post('/', (req: express.Request, res: express.Response) => {
   };
   reminders.push(newReminder);
 
-  return res.json({ data: reminders.filter(r => !r.completed) });
+  return res.json({ data: reminders.filter(reminder => !reminder.completed) });
 });
 
 app.put('/:id', (req: express.Request, res: express.Response) => {
@@ -50,7 +50,6 @@ app.put('/:id', (req: express.Request, res: express.Response) => {
   const reminder = reminders.find(reminder => reminder.id === id);
 
   if (reminder) {
-    reminder.description = payload.description;
     reminder.completed = payload.completed;
   }
 
